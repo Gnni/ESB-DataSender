@@ -6,9 +6,8 @@ import org.hpi.esb.util.Logging
 class DataProducerThread(dataProducer: DataProducer, producer: KafkaProducer[String, String], dataReader: DataReader, topic: String, sendWholeMessage: Boolean)
   extends Runnable with Logging {
 
-
   def run() {
-    val line = dataReader.getLine()
+    val line = dataReader.getLine
     if (line != null) {
 
       var value = ""
@@ -19,10 +18,9 @@ class DataProducerThread(dataProducer: DataProducer, producer: KafkaProducer[Str
 
       producer.send(message)
       logger.debug(s"Sent value $value.")
-    }
-    else {
+    } else {
       logger.info(s"Found end of data file.")
-      dataProducer.shutDown()
+      dataProducer.shutDown
     }
   }
 }

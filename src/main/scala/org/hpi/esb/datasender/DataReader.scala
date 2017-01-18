@@ -6,9 +6,6 @@ class DataReader(var dataInputPath: String) {
 
   private val br = new BufferedReader(new FileReader(dataInputPath))
 
-  def getLine() = {
-    br.readLine()
-  }
-
-  def close() = br.close()
+  def getLine = br.readLine
+  def close = br.close
 }
