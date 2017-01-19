@@ -39,10 +39,10 @@ object Main {
         .action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(kafkaTopic = x))) 
         .text("target kafka topic")
 
-      opt[Unit]('w', "wholeMessage")
+      opt[Int]('c', "column")
         .optional()
-        .action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(sendWholeMessage = true))) 
-        .text("send whole message or just column 4")
+        .action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(columnToBeSend = x)))
+        .text("send whole record (-1) or a certain column (numbering starting at 0)")
 
       opt[Unit]('v', "verbose")
         .optional()

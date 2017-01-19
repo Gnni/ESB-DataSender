@@ -31,7 +31,7 @@ class DataProducer(producerConfig: DataProducerConfig) extends Logging {
 
   def execute(): Unit = {
     val initialDelay = 0
-    val producerThread = new DataProducerThread(this, producer, dataReader, producerConfig.kafkaTopic, producerConfig.sendWholeMessage)
+    val producerThread = new DataProducerThread(this, producer, dataReader, producerConfig.kafkaTopic, producerConfig.columnToBeSend)
 
     t = executor.scheduleAtFixedRate(producerThread, initialDelay, producerConfig.dataProducerPeriod, TimeUnit.MICROSECONDS)
     logger.info("Start sending messages to Apache Kafka.")

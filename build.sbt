@@ -4,6 +4,7 @@ libraryDependencies ++= Seq(
   "log4j" % "log4j" % "1.2.14",
   "org.scalatest" %% "scalatest" % "3.0.1" % "test",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.4.2" % Test,
+  "org.mockito" % "mockito-core" % "2.6.3",
   "com.github.scopt" %% "scopt" % "3.5.0"
 )
 
