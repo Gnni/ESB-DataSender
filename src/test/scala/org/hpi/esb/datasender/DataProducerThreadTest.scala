@@ -12,6 +12,9 @@ class DataProducerThreadTest extends FlatSpec with Matchers with PrivateMethodTe
 
 	val topic: String = "FC Magdeburg"
 	val record: String = "10 11 12 13 14 15"
+	val alternativeDelimiter: String = ","
+	val recordWithalternativeDelimiterlimiter: String = s"10${alternativeDelimiter}11${alternativeDelimiter}12${alternativeDelimiter}13"
+	val defaultColumnDelimiter: String = "s+" //any number of whitespaces
 	val columnToBeSend: Int = -1
 	var mockedKafkaProducer: KafkaProducer[String, String] = null
 	var mockedDataReader: DataReader = null
@@ -23,11 +26,11 @@ class DataProducerThreadTest extends FlatSpec with Matchers with PrivateMethodTe
 	after {
 	}
 
-	def initializeDefaultDataProducerThread(column: Int = columnToBeSend): DataProducerThread = {
+	def initializeDefaultDataProducerThread(column: Int = columnToBeSend, columnDelimiter: String = defaultColumnDelimiter): DataProducerThread = {
 		mockedKafkaProducer = mock[KafkaProducer[String, String]]
 		mockedDataReader = mock[DataReader]
 		mockedDataProducer = mock[DataProducer]
-		new DataProducerThread(mockedDataProducer, mockedKafkaProducer, mockedDataReader, topic, column)
+		new DataProducerThread(mockedDataProducer, mockedKafkaProducer, mockedDataReader, topic, column, columnDelimiter)
 	}
 
 	"A DataProducerThread" should "return the specified column (idx 1)" in {
@@ -35,6 +38,13 @@ class DataProducerThreadTest extends FlatSpec with Matchers with PrivateMethodTe
 		when(mockedDataReader.getLine).thenReturn(record)
 		dataProducerThread.run
 		verify(mockedKafkaProducer, times(1)).send(new ProducerRecord[String, String](topic, "11"))
+	}
+
+	it should "return the specified column with column delimiter that is not default" in {
+		val dataProducerThread = initializeDefaultDataProducerThread(2, alternativeDelimiter)
+		when(mockedDataReader.getLine).thenReturn(recordWithalternativeDelimiterlimiter)
+		dataProducerThread.run
+		verify(mockedKafkaProducer, times(1)).send(new ProducerRecord[String, String](topic, "12"))
 	}
 
 	it should "return a whole data record if specified, i.e. columnToSend < 0" in {

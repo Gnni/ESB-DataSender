@@ -44,6 +44,11 @@ object Main {
         .action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(columnToBeSend = x)))
         .text("send whole record (-1) or a certain column (numbering starting at 0)")
 
+			opt[String]('d', "delimeter")
+				.optional()
+				.action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(columnDelimiter = x)))
+				.text("specify column delimiter, e.g. ';' or ',' - default is 's+', i.e. any number of whitespaces")
+
       opt[Unit]('v', "verbose")
         .optional()
         .action ( (x,c) => c.copy(verbose = true) )

@@ -3,7 +3,7 @@ package org.hpi.esb.datasender
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import org.hpi.esb.util.Logging
 
-class DataProducerThread(dataProducer: DataProducer, producer: KafkaProducer[String, String], dataReader: DataReader, topic: String, columnToBeSend: Int)
+class DataProducerThread(dataProducer: DataProducer, producer: KafkaProducer[String, String], dataReader: DataReader, topic: String, columnToBeSend: Int, columnDelimiter: String)
   extends Runnable with Logging {
 
   def run() {
@@ -11,7 +11,7 @@ class DataProducerThread(dataProducer: DataProducer, producer: KafkaProducer[Str
     if (line != null) {
       var value = line
       if (columnToBeSend >= 0)
-        value = line.split("\\s+")(columnToBeSend)
+        value = line.split(s"\\${columnDelimiter}")(columnToBeSend)
 
       val message = new ProducerRecord[String, String](topic, value)
 
