@@ -15,14 +15,14 @@ object Main {
     if (config.verbose) Logging.setToDebug
     else Logging.setToInfo
 
-    dataProducer.execute()
+    dataProducer.execute
   }
 
   def handleCliArguments (args: Array[String]): DataSenderConfig =
   {
     val parser = new OptionParser[DataSenderConfig]("DataSender") {
 
-      help("help").text("print this usage text")
+      help("help").text("print this usage text").abbr("h")
 
       opt[String]('i', "inputPath")
         .required()
