@@ -1,70 +1,48 @@
 package org.hpi.esb.datasender
 
-import java.nio.file.{Files, Paths}
-import scopt.OptionParser
-
+import java.io.FileNotFoundException
+import org.hpi.esb.conf.configs.Config
 import org.hpi.esb.util.Logging
+import scala.util.{Failure, Success}
+import pureconfig.loadConfig
+import scalax.file.Path
 
-object Main {
+object Main extends Logging {
+
+	val config = loadConfig[Config] match {
+		case Failure(f) => throw f
+		case Success(conf) => {
+			if (!Path.fromString(conf.datasender.dataInputPath).exists ||
+				!Path.fromString(conf.datasender.dataInputPath).isFile) {
+				throw new FileNotFoundException(s"The provided file path (path:${conf.datasender.dataInputPath}) does not exist.")
+				System.exit(1)
+			}
+			conf
+		}
+	}
+
+	val verboseOptionShort:String = "-v"
+	val verboseOptionLong:String = "--verbose"
+	val usage = s"""
+    Usage: sbt run | sbt \"run $verboseOptionShort\"  sbt \"run $verboseOptionLong\"
+  """
 
   def main(args: Array[String]) = {
 
-    val config = handleCliArguments(args)    
-    val dataProducer = new DataProducer(config.producerConfig)
-      
-    if (config.verbose) Logging.setToDebug
-    else Logging.setToInfo
+		Logging.setToInfo
+		if (args.length > 0) {
+			if (args.length == 1 && (args(0).trim.equalsIgnoreCase(verboseOptionShort) ||
+				args(0).trim.equalsIgnoreCase(verboseOptionLong))) {
+				Logging.setToDebug
+				logger.info("DEBUG/VERBOSE mode switched on")
+			} else {
+				logger.warn(usage)
+				logger.warn("ignoring arguments")
+			}
+		}
 
+		val dataProducer = new DataProducer(config.datasender)
     dataProducer.execute
-  }
-
-  def handleCliArguments (args: Array[String]): DataSenderConfig =
-  {
-    val parser = new OptionParser[DataSenderConfig]("DataSender") {
-
-      help("help").text("print this usage text").abbr("h")
-
-      opt[String]('i', "inputPath")
-        .required()
-        .action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(dataInputPath = x))) 
-        .text("file to be send line wise")
-
-      opt[Long]('p', "producerPeriod")
-        .required()
-        .action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(dataProducerPeriod = x))) 
-        .text("period of send operations")
-
-      opt[String]('t', "kafkaTopic")
-        .required()
-        .action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(kafkaTopic = x))) 
-        .text("target kafka topic")
-
-      opt[Int]('c', "column")
-        .optional()
-        .action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(columnToBeSend = x)))
-        .text("send whole record (-1) or a certain column (numbering starting at 0)")
-
-			opt[String]('d', "delimeter")
-				.optional()
-				.action ( (x,c) => c.copy(producerConfig = c.producerConfig.copy(columnDelimiter = x)))
-				.text("specify column delimiter, e.g. ';' or ',' - default is 's+', i.e. any number of whitespaces")
-
-      opt[Unit]('v', "verbose")
-        .optional()
-        .action ( (x,c) => c.copy(verbose = true) )
-        .text("be verbose")
-
-      checkConfig ( c =>
-        if (!Files.exists(Paths.get(c.producerConfig.dataInputPath)))
-          failure("The provided file path does not exist.")
-        else success
-      )
-    }
-
-    parser.parse(args, DataSenderConfig()) match {
-      case (Some(config)) => config
-      case None => sys.exit(1)
-    }
   }
 }
 

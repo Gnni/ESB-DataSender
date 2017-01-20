@@ -7,7 +7,7 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.6.3",
 	"com.github.scala-incubator.io" % "scala-io-core_2.11" % "0.4.3-1",
 	"com.github.scala-incubator.io" % "scala-io-file_2.11" % "0.4.3-1",
-  "com.github.scopt" %% "scopt" % "3.5.0"
+	"com.github.melrief" %% "pureconfig" % "0.5.0"
 )
 
 lazy val root = (project in file("."))

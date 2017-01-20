@@ -18,7 +18,7 @@ class DataProducerThread(dataProducer: DataProducer, producer: KafkaProducer[Str
       producer.send(message)
 			logger.debug(s"Sent value $value.")
     } else {
-      logger.info(s"Found end of data file.")
+      logger.info("Found end of data file.")
       dataProducer.shutDown
     }
   }
