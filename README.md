@@ -1,0 +1,1 @@
+[![Build Status](https://travis-ci.org/Gnni/ESB-DataSender.svg?branch=master)](https://travis-ci.org/Gnni/ESB-DataSender)
