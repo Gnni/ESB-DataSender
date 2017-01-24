@@ -5,15 +5,12 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatest._
 import org.scalatest.mockito.MockitoSugar
 
-/**
-  * Created by guenterhesse on 19/01/2017.
-  */
 class DataProducerThreadTest extends FlatSpec with Matchers with PrivateMethodTester with BeforeAndAfter with MockitoSugar {
 
   val topic: String = "FC Magdeburg"
   val record: String = "10 11 12 13 14 15"
   val alternativeDelimiter: String = ","
-  val recordWithalternativeDelimiterlimiter: String = s"10${alternativeDelimiter}11${alternativeDelimiter}12${alternativeDelimiter}13"
+  val recordWithAlternativeDelimiter: String = s"10${alternativeDelimiter}11${alternativeDelimiter}12${alternativeDelimiter}13"
   val defaultColumnDelimiter: String = "s+" //any number of whitespaces
   val columnToBeSend: Int = -1
   var mockedKafkaProducer: KafkaProducer[String, String] = null
@@ -42,7 +39,7 @@ class DataProducerThreadTest extends FlatSpec with Matchers with PrivateMethodTe
 
   it should "return the specified column with column delimiter that is not default" in {
     val dataProducerThread = initializeDefaultDataProducerThread(2, alternativeDelimiter)
-    when(mockedDataReader.getLine).thenReturn(recordWithalternativeDelimiterlimiter)
+    when(mockedDataReader.getLine).thenReturn(recordWithAlternativeDelimiter)
     dataProducerThread.run
     verify(mockedKafkaProducer, times(1)).send(new ProducerRecord[String, String](topic, "12"))
   }

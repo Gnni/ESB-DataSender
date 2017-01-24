@@ -5,9 +5,6 @@ import org.scalatest._
 import scalax.file.Path
 import scalax.io.{Codec, Resource, Seekable}
 
-/**
-  * Created by guenterhesse on 18/01/2017.
-  */
 class DataReaderTest extends FlatSpec with Matchers with PrivateMethodTester with BeforeAndAfter {
 
     implicit val codec = Codec.UTF8

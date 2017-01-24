@@ -25,8 +25,8 @@ class DataProducer(producerConfig: DataSenderConfig) extends Logging {
   def shutDown() = {
     t.cancel(false)
     dataReader.close
-    producer.close
-    executor.shutdown
+    producer.close()
+    executor.shutdown()
     logger.info("Shut data producer down.")
   }
 
